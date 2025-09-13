@@ -336,9 +336,10 @@ interface ClientDetailModalProps {
     onRecordPayment: (projectId: string, amount: number, destinationCardId: string) => void;
     cards: Card[];
     onSharePortal: (client: Client) => void;
+    setIsPrintingClientDetail: (isPrinting: boolean) => void;
 }
 
-const ClientDetailModal: React.FC<ClientDetailModalProps> = ({ client, projects, transactions, contracts, onClose, onEditProject, onDeleteClient, onViewReceipt, onViewInvoice, handleNavigation, onRecordPayment, cards, onSharePortal }) => {
+const ClientDetailModal: React.FC<ClientDetailModalProps> = ({ client, projects, transactions, contracts, onClose, onEditProject, onDeleteClient, onViewReceipt, onViewInvoice, handleNavigation, onRecordPayment, cards, onSharePortal, setIsPrintingClientDetail }) => {
     const [activeTab, setActiveTab] = useState('info');
     const [newPayments, setNewPayments] = useState<{[key: string]: { amount: string, destinationCardId: string }}>({});
 
@@ -401,14 +402,14 @@ const ClientDetailModal: React.FC<ClientDetailModalProps> = ({ client, projects,
 
     return (
         <div>
-            <div className="border-b border-brand-border">
+            <div className="border-b border-brand-border non-printable">
                 <nav className="-mb-px flex space-x-6 overflow-x-auto">
                     <button onClick={() => setActiveTab('info')} className={`shrink-0 inline-flex items-center gap-2 py-3 px-1 border-b-2 font-medium text-sm ${activeTab === 'info' ? 'border-brand-accent text-brand-accent' : 'border-transparent text-brand-text-secondary hover:text-brand-text-light'}`}><UsersIcon className="w-5 h-5"/> Informasi Klien</button>
                     <button onClick={() => setActiveTab('payments')} className={`shrink-0 inline-flex items-center gap-2 py-3 px-1 border-b-2 font-medium text-sm ${activeTab === 'payments' ? 'border-brand-accent text-brand-accent' : 'border-transparent text-brand-text-secondary hover:text-brand-text-light'}`}><HistoryIcon className="w-5 h-5"/> Riwayat Pembayaran</button>
                     <button onClick={() => setActiveTab('documents')} className={`shrink-0 inline-flex items-center gap-2 py-3 px-1 border-b-2 font-medium text-sm ${activeTab === 'documents' ? 'border-brand-accent text-brand-accent' : 'border-transparent text-brand-text-secondary hover:text-brand-text-light'}`}><FileTextIcon className="w-5 h-5"/> Kontrak Kerja</button>
                 </nav>
             </div>
-            <div className="pt-5 max-h-[65vh] overflow-y-auto pr-2">
+            <div className="pt-5 max-h-[65vh] overflow-y-auto pr-2 client-detail-printable-area">
                 {activeTab === 'info' && (
                      <div className="space-y-8">
                         <div>
@@ -421,7 +422,7 @@ const ClientDetailModal: React.FC<ClientDetailModalProps> = ({ client, projects,
                                 <DetailRow label="Instagram">{client.instagram || '-'}</DetailRow>
                                 <DetailRow label="Klien Sejak">{new Date(client.since).toLocaleDateString('id-ID')}</DetailRow>
                             </dl>
-                            <button onClick={() => onSharePortal(client)} className="mt-5 button-secondary inline-flex items-center gap-2 text-sm"><Share2Icon className="w-4 h-4" /> Bagikan Portal Klien</button>
+                            <button onClick={() => onSharePortal(client)} className="mt-5 button-secondary inline-flex items-center gap-2 text-sm non-printable"><Share2Icon className="w-4 h-4" /> Bagikan Portal Klien</button>
                         </div>
                         
                         <div>
@@ -452,7 +453,7 @@ const ClientDetailModal: React.FC<ClientDetailModalProps> = ({ client, projects,
                                                 <span>Sisa: <span className="font-medium text-red-400">{formatCurrency(remainingBalance)}</span></span>
                                             </div>
                                         </div>
-                                        <div className="flex items-center gap-2 flex-shrink-0 self-start sm:self-center">
+                                        <div className="flex items-center gap-2 flex-shrink-0 self-start sm:self-center non-printable">
                                             {p.dpProofUrl && (
                                                 <a href={p.dpProofUrl} target="_blank" rel="noopener noreferrer" className="button-secondary text-sm inline-flex items-center gap-2">
                                                     <CreditCardIcon className="w-4 h-4" /> Lihat Bukti DP
@@ -473,7 +474,7 @@ const ClientDetailModal: React.FC<ClientDetailModalProps> = ({ client, projects,
                                             <thead className="bg-brand-bg"><tr className="bg-brand-bg"><th className="p-3 text-left font-medium text-brand-text-secondary">Tanggal</th><th className="p-3 text-left font-medium text-brand-text-secondary">Deskripsi</th><th className="p-3 text-right font-medium text-brand-text-secondary">Jumlah</th><th className="p-3 text-center font-medium text-brand-text-secondary">Aksi</th></tr></thead>
                                             <tbody>
                                                 {transactionsForProject.length > 0 ? transactionsForProject.map(t => (
-                                                    <tr key={t.id} className="border-t border-brand-border"><td className="p-3">{new Date(t.date).toLocaleDateString('id-ID')}</td><td className="p-3">{t.description}</td><td className="p-3 text-right font-semibold text-green-400">{formatCurrency(t.amount)}</td><td className="p-3 text-center"><button onClick={() => onViewReceipt(t)} className="p-1 text-brand-text-secondary hover:text-brand-accent"><PrinterIcon className="w-5 h-5"/></button></td></tr>
+                                                    <tr key={t.id} className="border-t border-brand-border"><td className="p-3">{new Date(t.date).toLocaleDateString('id-ID')}</td><td className="p-3">{t.description}</td><td className="p-3 text-right font-semibold text-green-400">{formatCurrency(t.amount)}</td><td className="p-3 text-center non-printable"><button onClick={() => onViewReceipt(t)} className="p-1 text-brand-text-secondary hover:text-brand-accent"><PrinterIcon className="w-5 h-5"/></button></td></tr>
                                                 )) : (
                                                     <tr><td colSpan={4} className="text-center p-4 text-brand-text-secondary">Belum ada pembayaran untuk proyek ini.</td></tr>
                                                 )}
@@ -482,7 +483,7 @@ const ClientDetailModal: React.FC<ClientDetailModalProps> = ({ client, projects,
                                     </div>
 
                                     {remainingBalance > 0 && (
-                                        <>
+                                        <div className="non-printable">
                                             <h4 className="text-base font-semibold text-brand-text-light mt-4 mb-2">Catat Pembayaran Baru</h4>
                                             <div className="p-4 bg-brand-bg rounded-lg flex flex-col sm:flex-row items-center gap-4">
                                                 <div className="input-group flex-grow w-full !mt-0">
@@ -495,7 +496,7 @@ const ClientDetailModal: React.FC<ClientDetailModalProps> = ({ client, projects,
                                                 </div>
                                                 <button onClick={() => handleNewPaymentSubmit(p.id)} className="button-primary h-fit w-full sm:w-auto flex-shrink-0">CATAT</button>
                                             </div>
-                                        </>
+                                        </div>
                                     )}
                                 </div>
                             )
@@ -504,7 +505,7 @@ const ClientDetailModal: React.FC<ClientDetailModalProps> = ({ client, projects,
                 )}
                 {activeTab === 'documents' && (
                     <div className="space-y-4">
-                        <div className="flex justify-between items-center">
+                        <div className="flex justify-between items-center non-printable">
                             <h4 className="text-base font-semibold text-brand-text-light">Daftar Kontrak Kerja</h4>
                             <button 
                                 onClick={() => handleNavigation(ViewType.CONTRACTS, { type: 'CREATE_CONTRACT_FOR_CLIENT', id: client.id })} 
@@ -526,7 +527,7 @@ const ClientDetailModal: React.FC<ClientDetailModalProps> = ({ client, projects,
                                             </div>
                                             <button 
                                                 onClick={() => handleNavigation(ViewType.CONTRACTS, { type: 'VIEW_CONTRACT', id: contract.id })}
-                                                className="button-secondary text-sm"
+                                                className="button-secondary text-sm non-printable"
                                             >
                                                 Lihat Detail
                                             </button>
@@ -541,6 +542,11 @@ const ClientDetailModal: React.FC<ClientDetailModalProps> = ({ client, projects,
                         </div>
                     </div>
                 )}
+            </div>
+            <div className="mt-6 text-right non-printable border-t border-brand-border pt-4">
+                <button type="button" onClick={() => setIsPrintingClientDetail(true)} className="button-secondary inline-flex items-center gap-2">
+                    <PrinterIcon className="w-4 h-4"/> Cetak Ringkasan
+                </button>
             </div>
         </div>
     );
@@ -613,6 +619,28 @@ const Clients: React.FC<ClientsProps> = ({ clients, setClients, projects, setPro
     const [documentToView, setDocumentToView] = useState<{ type: 'invoice', project: Project } | { type: 'receipt', transaction: Transaction } | null>(null);
     const [isSignatureModalOpen, setIsSignatureModalOpen] = useState(false);
     const [qrModalContent, setQrModalContent] = useState<{ title: string; url: string } | null>(null);
+    const [isPrintingClientDetail, setIsPrintingClientDetail] = useState(false);
+
+    useEffect(() => {
+        if (isPrintingClientDetail) {
+            document.body.classList.add('print-client-detail-active');
+            // Use timeout to allow state to update and class to be applied before printing
+            setTimeout(() => {
+                window.print();
+                setIsPrintingClientDetail(false);
+            }, 100);
+        } else {
+            document.body.classList.remove('print-client-detail-active');
+        }
+
+        const cleanup = () => document.body.classList.remove('print-client-detail-active');
+        window.addEventListener('afterprint', cleanup);
+
+        return () => {
+            cleanup();
+            window.removeEventListener('afterprint', cleanup);
+        };
+    }, [isPrintingClientDetail]);
 
     useEffect(() => {
         // Add a class to the body when the document viewer modal is open to control print styles
@@ -1404,7 +1432,8 @@ const Clients: React.FC<ClientsProps> = ({ clients, setClients, projects, setPro
                     handleNavigation={handleNavigation} 
                     onRecordPayment={handleRecordPayment} 
                     cards={cards} 
-                    onSharePortal={handleOpenQrModal} 
+                    onSharePortal={handleOpenQrModal}
+                    setIsPrintingClientDetail={setIsPrintingClientDetail}
                 />
             </Modal>
     
