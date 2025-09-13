@@ -479,13 +479,13 @@ const DocumentViewerModal: React.FC<{viewingDocument: any, onClose: any, profile
     useEffect(() => {
         // Add a class to the body when the modal is open to control print styles
         if (viewingDocument) {
-            document.body.classList.add('print-invoice-active');
+            document.body.classList.add('print-modal-active');
         } else {
-            document.body.classList.remove('print-invoice-active');
+            document.body.classList.remove('print-modal-active');
         }
         // Cleanup function to ensure the class is removed when the modal is closed or component unmounts
         return () => {
-            document.body.classList.remove('print-invoice-active');
+            document.body.classList.remove('print-modal-active');
         };
     }, [viewingDocument]);
         

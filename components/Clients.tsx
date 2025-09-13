@@ -617,13 +617,13 @@ const Clients: React.FC<ClientsProps> = ({ clients, setClients, projects, setPro
     useEffect(() => {
         // Add a class to the body when the document viewer modal is open to control print styles
         if (documentToView) {
-            document.body.classList.add('print-internal-invoice-active');
+            document.body.classList.add('print-modal-active');
         } else {
-            document.body.classList.remove('print-internal-invoice-active');
+            document.body.classList.remove('print-modal-active');
         }
         // Cleanup function to ensure the class is removed when the modal is closed or component unmounts
         return () => {
-            document.body.classList.remove('print-internal-invoice-active');
+            document.body.classList.remove('print-modal-active');
         };
     }, [documentToView]);
     
