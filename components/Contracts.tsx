@@ -78,6 +78,20 @@ const Contracts: React.FC<ContractsProps> = ({ contracts, setContracts, clients,
     const [selectedProjectId, setSelectedProjectId] = useState('');
     
     const [isSignatureModalOpen, setIsSignatureModalOpen] = useState(false);
+
+    useEffect(() => {
+        // This effect will add a class to the body when the contract view modal is open,
+        // which allows for targeted print styles.
+        if (isViewModalOpen) {
+            document.body.classList.add('print-modal-active');
+        } else {
+            document.body.classList.remove('print-modal-active');
+        }
+        // Cleanup function to remove the class
+        return () => {
+            document.body.classList.remove('print-modal-active');
+        };
+    }, [isViewModalOpen]);
     
     useEffect(() => {
         if (qrModalContent) {

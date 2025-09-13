@@ -613,6 +613,19 @@ const Clients: React.FC<ClientsProps> = ({ clients, setClients, projects, setPro
     const [documentToView, setDocumentToView] = useState<{ type: 'invoice', project: Project } | { type: 'receipt', transaction: Transaction } | null>(null);
     const [isSignatureModalOpen, setIsSignatureModalOpen] = useState(false);
     const [qrModalContent, setQrModalContent] = useState<{ title: string; url: string } | null>(null);
+
+    useEffect(() => {
+        // Add a class to the body when the document viewer modal is open to control print styles
+        if (documentToView) {
+            document.body.classList.add('print-modal-active');
+        } else {
+            document.body.classList.remove('print-modal-active');
+        }
+        // Cleanup function to ensure the class is removed when the modal is closed or component unmounts
+        return () => {
+            document.body.classList.remove('print-modal-active');
+        };
+    }, [documentToView]);
     
     // New state for filters and UI
     const [searchTerm, setSearchTerm] = useState('');

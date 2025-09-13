@@ -142,21 +142,113 @@ html.dark .skeleton {
   }
 }
 
-/* Enhanced print styles for mobile */
+/* Enhanced print styles */
 @media print {
-  /* Hide mobile-specific UI elements */
+  /* Default print styles: hide common UI elements */
   .bottom-nav,
   .mobile-header,
+  .non-printable,
   button,
   .button-primary,
   .button-secondary {
     display: none !important;
   }
-  
-  /* Optimize text for print */
+
+  /* Default text optimization for print */
   body {
     font-size: 12pt !important;
     line-height: 1.4 !important;
+    background-color: white !important;
+  }
+
+  /*
+   * Generic Print Styles for Modal Document Viewers
+   * This is triggered when the body has the 'print-modal-active' class.
+   */
+  .print-modal-active body > * {
+    display: none !important;
+    visibility: hidden !important;
+  }
+
+  .print-modal-active div[role="dialog"],
+  .print-modal-active div[role="dialog"] > *,
+  .print-modal-active .printable-area,
+  .print-modal-active .printable-area * {
+    display: block !important;
+    visibility: visible !important;
+  }
+
+  .print-modal-active div[role="dialog"] {
+      position: absolute !important;
+      left: 0 !important;
+      top: 0 !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      height: auto !important;
+      max-height: none !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      border: none !important;
+      box-shadow: none !important;
+      background: none !important;
+      overflow: visible !important;
+  }
+
+  .print-modal-active div[role="dialog"] > div {
+      max-height: none !important;
+      box-shadow: none !important;
+      border: none !important;
+      padding: 0 !important;
+      margin: 0 !important;
+  }
+
+  .print-modal-active #invoice-content,
+  .print-modal-active #receipt-content,
+  .print-modal-active .printable-content {
+      display: block !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      max-height: none !important;
+      overflow: visible !important;
+      box-shadow: none !important;
+  }
+
+  .print-modal-active #invoice-content > div,
+  .print-modal-active #receipt-content > div {
+      box-shadow: none !important;
+  }
+
+  .print-modal-active .non-printable {
+    display: none !important;
+  }
+
+  /* Force background colors and text colors to print. */
+  .print-modal-active .printable-bg-blue {
+      background-color: #2563eb !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+  }
+
+  .print-modal-active .printable-text-white {
+      color: white !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+  }
+
+  .print-modal-active .print-text-green {
+      color: #16a34a !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+  }
+
+  .print-modal-active .printable-bg-green-light {
+      background-color: rgba(34, 197, 94, 0.1) !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+  }
+
+  .print-modal-active .avoid-break {
+      page-break-inside: avoid;
   }
 }
 

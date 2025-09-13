@@ -475,6 +475,19 @@ const FeedbackTab: React.FC<{client: Client, setClientFeedback: any, showNotific
 
 const DocumentViewerModal: React.FC<{viewingDocument: any, onClose: any, profile: Profile, packages: Package[], client: Client, onSignContract: any}> = ({viewingDocument, onClose, profile, packages, client, onSignContract}) => {
     const [isSigning, setIsSigning] = useState(false);
+
+    useEffect(() => {
+        // Add a class to the body when the modal is open to control print styles
+        if (viewingDocument) {
+            document.body.classList.add('print-modal-active');
+        } else {
+            document.body.classList.remove('print-modal-active');
+        }
+        // Cleanup function to ensure the class is removed when the modal is closed or component unmounts
+        return () => {
+            document.body.classList.remove('print-modal-active');
+        };
+    }, [viewingDocument]);
         
     const handleSaveSignature = (signature: string) => {
         if (viewingDocument?.type === 'contract') {
